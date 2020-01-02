@@ -64,7 +64,6 @@
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import BCX from "bcxjs-api";
 import Storage from "../../utils/storage";
 import utils from "../../utils/utils";
 export default {

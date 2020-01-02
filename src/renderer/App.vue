@@ -18,8 +18,6 @@ import Dialogs from "./components/dialog/dialog";
 import Update from "./components/dialog/update";
 import { mapState, mapMutations } from "vuex";
 // import { remote } from "electron";
-import Storage from "./utils/storage";
-import axios from "axios";
 export default {
   name: "root",
   components: {

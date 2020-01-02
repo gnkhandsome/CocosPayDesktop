@@ -21,7 +21,6 @@ export default new Vuex.Store({
   },
   state: {
     cocos: null,
-    loading: true,
     popups: [],
     loading: false,
     curLng: 'ZH',

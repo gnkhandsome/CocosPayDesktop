@@ -1,6 +1,6 @@
 import Sha from 'jssha'
 import crypto from 'crypto'
-import BCX from "bcxjs-api";
+import BCX from 'bcx-api'
 import ByteArray from './ByteArray'
 import {
   ec as EC

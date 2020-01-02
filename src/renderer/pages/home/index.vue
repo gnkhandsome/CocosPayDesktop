@@ -161,8 +161,10 @@ export default {
       this.total = 1;
       this.loadingBCXAccount().then(res => {
         if (res && res.locked) {
+            console.log("loadingBCXAccount -- res",res)
           if (this.cocosAccount.accounts) {
             this.setIsLocked(true);
+            console.log("cocosAccount.accounts",this.cocosAccount.accounts)
             this.$router.replace({ name: "unlock" });
           } else {
             if (res.mode === "account") {

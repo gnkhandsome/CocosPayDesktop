@@ -66,6 +66,7 @@ export default  {
       state.Password = Password
     },
     setLogin(state, isLogin) {
+      console.log("setLogin",isLogin)
       state.isLogin = isLogin
     },
     setIsAccount(state, isAccount) {

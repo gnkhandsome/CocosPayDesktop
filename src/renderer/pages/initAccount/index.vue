@@ -57,6 +57,7 @@ export default {
                 account: account.current_account.account_name,
                 password: ""
               });
+              console.log("getAccounts")
               this.setLogin(true);
               this.$router.replace({ name: "home" });
             }
