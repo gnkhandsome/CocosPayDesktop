@@ -15,15 +15,19 @@ Node.js version 11.+.+.
 ## Install dependence:
 
 ```
-1.npm install
+1.npm cache clean --force
 ```
 
 ```
-2.npm run dev
+2.npm install
 ```
 
 ```
-3.npm run build （.exe/dmg will be found in `./build`）
+3.npm run dev
+```
+
+```
+4.npm run build （.exe/dmg will be found in `./build`）
 ```
 
 Uncompressed build 
