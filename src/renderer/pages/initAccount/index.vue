@@ -48,6 +48,7 @@ export default {
       this.apiConfig(res[0]).then(() => {
         this.init().then(() => {
           this.getAccounts().then(account => {
+            console.info("getAccounts res",account);
             if (
               account.current_account &&
               account.current_account.account_name
@@ -57,7 +58,6 @@ export default {
                 account: account.current_account.account_name,
                 password: ""
               });
-              console.log("getAccounts")
               this.setLogin(true);
               this.$router.replace({ name: "home" });
             }
@@ -93,7 +93,6 @@ export default {
   methods: {
     ...mapMutations([
       "setCurrentAccount",
-      "setCurrentCreateAccount",
       "setCurrentCreateVisible",
       "setAccount",
       "setAccountType",

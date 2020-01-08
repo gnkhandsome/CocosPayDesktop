@@ -39,6 +39,7 @@ export default {
   },
   mounted() {
     this.init().then(res => {
+      
       this.getAccounts().then(res => {
         this.setAccountType(res.current_account.mode);
         this.connectSocket();

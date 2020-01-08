@@ -92,7 +92,7 @@ export default {
 
   actions: {
     // 钱包模式注册
-    async WalletBCXAccount({
+    async createAccountWithWallet({
       commit,
       state,
       rootState
@@ -131,6 +131,49 @@ export default {
         return e
       }
     },
+
+     // 账户模式注册
+     async createAccountWithPassword({
+      commit,
+      state,
+      rootState
+    }) {
+      commit('loading', true, {
+        root: true
+      })
+      try {
+        let resData
+        await NewBCX.createAccountWithPassword({
+          account: rootState.cocosAccount.accounts,
+          password: rootState.cocosAccount.passwords,
+          autoLogin: true
+        }).then((res) => {
+          commit('loading', false, {
+            root: true
+          })
+          if (res.code === 1) {
+            commit('setIsAccount', true, {
+              root: true
+            })
+            commit('setLogin', true, {
+              root: true
+            })
+            commit('setAccountType', 'account', {
+              root: true
+            })
+          } else {
+            Alert({
+              message: CommonJs.getI18nMessages(I18n).error[res.code]
+            })
+          }
+          resData = res
+        })
+        return resData
+      } catch (e) {
+        return e
+      }
+    },
+
 
     // 查看钱包账户
     async getAccounts({
@@ -292,23 +335,7 @@ export default {
         return e
       }
     },
-    // 查询账户状态
-    async loadingBCXAccount({
-      commit
-    }) {
-      commit('loading', true, {
-        root: true
-      })
-      try {
-        let data = await NewBCX.getAccountInfo()
-        commit('loading', false, {
-          root: true
-        })
-        return data
-      } catch (e) {
-        return e
-      }
-    },
+ 
     // 恢复钱包
     async RestoreWallet({
       commit,

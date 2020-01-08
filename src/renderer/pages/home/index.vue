@@ -104,6 +104,7 @@ export default {
   },
   watch: {
     "cocosAccount.accounts"() {
+      console.log("cocosAccount.accounts")
       this.loadData();
     }
   },
@@ -146,7 +147,7 @@ export default {
     ...mapMutations("wallet", ["addAccount", "updateAccount", "deleteWallet"]),
     ...mapActions(["lockCount", "nodeLists", "UpdateVersion"]),
     ...mapActions("account", [
-      "loadingBCXAccount",
+      "getAccountInfo",
       "UserAccount",
       "OutPutKey",
       "logoutBCXAccount"
@@ -159,9 +160,9 @@ export default {
     loadData() {
       this.totalTx = [];
       this.total = 1;
-      this.loadingBCXAccount().then(res => {
-        if (res && res.locked) {
-            console.log("loadingBCXAccount -- res",res)
+      this.getAccountInfo().then(res => {
+        if (res.account_name && res.locked) {
+            console.log("getAccountInfo -- res",res)
           if (this.cocosAccount.accounts) {
             this.setIsLocked(true);
             console.log("cocosAccount.accounts",this.cocosAccount.accounts)
@@ -226,28 +227,6 @@ export default {
       this.queryTranferList().then(res => {
         this.tranfers = res;
         return;
-        // if (res.length < 10) {
-        // }
-        // let j = 0;
-        // let list = [];
-        // this.totalTx = [];
-        // this.tranfers = [];
-        // for (let i = 0; i < res.length; i++) {
-        //   if (j < 10) {
-        //     j++;
-        //     list.push(res[i]);
-        //     if (res.length - 2 === i) {
-        //       this.totalTx.push(list);
-        //     }
-        //   } else {
-        //     j = 0;
-        //     this.totalTx.push(list);
-        //     list = [];
-        //   }
-        // }
-
-        // this.total = this.totalTx.length;
-        // this.tranfers = this.totalTx[0];
       });
     },
     closedAccountDialog() {

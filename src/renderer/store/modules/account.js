@@ -22,55 +22,11 @@ export default {
     assets: []
   },
   actions: {
-    // 账户模式注册
-    async loadBCXAccount({
-      commit,
-      state,
-      rootState
-    }) {
-      commit('loading', true, {
-        root: true
-      })
-      try {
-        let resData
-        await NewBCX.createAccountWithPassword({
-          account: rootState.cocosAccount.accounts,
-          password: rootState.cocosAccount.passwords,
-          autoLogin: true
-        }).then((res) => {
-          commit('loading', false, {
-            root: true
-          })
-          if (res.code === 1) {
-            commit('setIsAccount', true, {
-              root: true
-            })
-            commit('setLogin', true, {
-              root: true
-            })
-            commit('setAccountType', 'account', {
-              root: true
-            })
-          } else {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[res.code]
-            })
-          }
-          resData = res
-        })
-        return resData
-      } catch (e) {
-        return e
-      }
-    },
     // 退出登陆
     async logoutBCXAccount({
       commit
     }) {
       try {
-        // commit('loading', true, {
-        //   root: true
-        // })
         let resData
         await NewBCX.logout().then((res) => {
           commit('loading', false, {
@@ -94,16 +50,7 @@ export default {
           commit('setLogin', false, {
             root: true
           })
-          // setIsImportKeys
           resData = res
-          // if (res.code !== 1) {
-          //   Alert({
-          //     message: CommonJs.getI18nMessages(I18n).error[res.code]
-          //   })
-          // }
-          // router.replace({
-          //   name: 'initAccount'
-          // })
         })
         return resData
       } catch (e) {
@@ -270,7 +217,7 @@ export default {
       }
     },
     // 查询账户状态
-    async loadingBCXAccount({
+    async getAccountInfo({
       commit
     }) {
       commit('loading', true, {
@@ -281,17 +228,12 @@ export default {
         commit('loading', false, {
           root: true
         })
-        // if (data.code !== 1) {
-        //   console.log(data)
-        //   Alert({
-        //     message: data.message
-        //   })
-        // }
         return data
       } catch (e) {
         return e
       }
     },
+    
     async importPrivateKey({
       commit,
       state,

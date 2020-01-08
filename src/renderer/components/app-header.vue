@@ -94,7 +94,7 @@ export default {
     ]),
     ...mapActions("wallet", ["getAccounts", "setCurrentAccount"]),
     ...mapActions(["lockCount"]),
-    ...mapActions("account", ["loadingBCXAccount"]),
+    ...mapActions("account", ["getAccountInfo"]),
     loadAccounts() {
       // setTimeout(() => {
       this.getAccounts().then(res => {

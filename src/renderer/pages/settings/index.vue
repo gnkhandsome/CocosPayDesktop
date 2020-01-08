@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setIsLocked"]),
-    ...mapActions("account", ["loadingBCXAccount"]),
+    ...mapActions("account", ["getAccountInfo"]),
     ...mapActions(["nodeLists"]),
     changeSetting(type) {
       this.type = type;
@@ -168,7 +168,7 @@ export default {
         settingTypes.push(item);
       }
     });
-    await this.loadingBCXAccount().then(res => {
+    await this.getAccountInfo().then(res => {
       if (res && res.locked) {
         settingTypes = [];
         this.setIsLocked(true);

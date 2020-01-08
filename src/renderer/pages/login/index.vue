@@ -230,7 +230,6 @@ export default {
       "setAccountAdd"
     ]),
     ...mapActions("account", [
-      "loadBCXAccount",
       "loginBCXAccount",
       "logoutBCXAccount",
       "unlockAccount"
@@ -238,6 +237,7 @@ export default {
     ...mapActions("wallet", [
       "importPrivateKey",
       "LoadWalletFile",
+      "createAccountWithPassword",
       "deleteWallet",
       "RestoreWallet",
       "setSeed",

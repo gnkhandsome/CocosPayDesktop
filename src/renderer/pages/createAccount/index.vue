@@ -171,13 +171,13 @@ export default {
       "AccountLogin"
     ]),
     ...mapActions("account", [
-      "loadBCXAccount",
       "loginBCXAccount",
       "logoutBCXAccount",
       "OutPutKey"
     ]),
     ...mapActions("wallet", [
-      "WalletBCXAccount",
+      "createAccountWithWallet",
+      "createAccountWithPassword",
       "deleteWallet",
       "importPrivateKey",
       "OutWalletPutKey"
@@ -185,15 +185,18 @@ export default {
     createWallet(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.deleteWallet().then(res => {
+          console.log("deleteWallet",res)
+          });
+
           if (this.radio === "account") {
             this.setAccount({
               account: this.formData.account,
               password: this.formData.password
             });
-            this.loadBCXAccount().then(res => {
+            this.createAccountWithPassword().then(res => { 
+              console.log("createAccountWithPassword",res);
               if (res.code === 1) {
-                // this.loginBCXAccount().then(result => {
-                //   if (result.code === 1) {
                 this.setLogin(true);
                 SocketService.initialize();
                 this.WalletRegister(false);
@@ -226,11 +229,8 @@ export default {
               account: this.formData.account,
               password: this.formData.password
             });
-            this.WalletBCXAccount().then(res => {
-              // this.setAccount({
-              //   account: this.formData.account,
-              //   password: ""
-              // });
+            this.createAccountWithWallet().then(res => {
+              console.log("createAccountWithWallet",res);
               if (res.code === 1) {
                 SocketService.initialize();
                 if (!this.cocos) {
@@ -265,11 +265,6 @@ export default {
         return;
       }
     }
-
-    // changeLanguage() {
-    //   this.setCurLng(this.lang);
-    //   this.$i18n.locale = this.lang;
-    // }
   }
 };
 </script>
