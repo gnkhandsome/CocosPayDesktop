@@ -174,6 +174,7 @@ export default {
     sendFail: '发送出错',
     modifySuccess: '修改成功',
     modifyPasswordSuccess: '密码修改成功',
+    modifyPasswordFailed: '密码修改失败',
     redeemSuccess: '解冻成功',
     redeemFail: '解冻失败，请稍后再试',
     pledgeSuccess: '冻结成功',

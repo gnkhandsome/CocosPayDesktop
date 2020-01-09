@@ -62,7 +62,6 @@ export default class utils {
 
   static init(Node) {
     return new BCX({
-      default_ws_node: Node.ws,
       ws_node_list: [{
         url: Node.ws,
         name: Node.name

@@ -185,16 +185,16 @@ export default {
     createWallet(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+
           this.deleteWallet().then(res => {
           console.log("deleteWallet",res)
           });
-
-          if (this.radio === "account") {
-            this.setAccount({
+         let createParams = {
               account: this.formData.account,
               password: this.formData.password
-            });
-            this.createAccountWithPassword().then(res => { 
+            }
+          if (this.radio === "account") {
+            this.createAccountWithPassword(createParams).then(res => { 
               console.log("createAccountWithPassword",res);
               if (res.code === 1) {
                 this.setLogin(true);
@@ -220,16 +220,11 @@ export default {
                     this.privateStore(true);
                   }
                 });
-                //   }
-                // });
               }
             });
-          } else {
-            this.setAccount({
-              account: this.formData.account,
-              password: this.formData.password
-            });
-            this.createAccountWithWallet().then(res => {
+            return;
+          } 
+          this.createAccountWithWallet(createParams).then(res => {
               console.log("createAccountWithWallet",res);
               if (res.code === 1) {
                 SocketService.initialize();
@@ -252,7 +247,7 @@ export default {
                 this.WalletRegister(false);
               }
             });
-          }
+          
         }
       });
     },

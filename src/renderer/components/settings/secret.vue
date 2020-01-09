@@ -91,30 +91,28 @@ export default {
   },
   name: "secret",
   methods: {
-    ...mapMutations(["setPassword"]),
     ...mapActions("account", ["changePassword"]),
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.setPassword({
+        this.changePassword({
             oldPassword: this.formData.oldPassword,
             newPassword: this.formData.password
-          });
-          this.changePassword().then(res => {
+         }).then(res => {
             if (res.code === 1) {
               this.$kalert({
                 message: this.$i18n.t("alert.modifyPasswordSuccess")
-              });
-              this.setPassword({
-                oldPassword: "",
-                newPassword: ""
               });
               setTimeout(() => {
                 this.$router.replace({
                   name: "initAccount"
                 });
               }, 1000);
+            return
             }
+            this.$kalert({
+              message: this.$i18n.t("alert.modifyPasswordFailed")
+            });
           });
         }
       });

@@ -173,6 +173,7 @@ export default {
     sendFail: 'Send Fail',
     modifySuccess: 'Modify Success',
     modifyPasswordSuccess: 'Modify Password Success',
+    modifyPasswordFailed: 'Modify Password Failed',
     redeemSuccess: 'UnFreeze Success',
     redeemFail: 'UnFreeze failed. Please try again later',
     pledgeSuccess: 'Freeze Success',

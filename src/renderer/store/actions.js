@@ -57,35 +57,27 @@ export default {
         commit
     }) {
         try {
-            // commit('loading', true, {
-            //     root: true
-            // })
-            let nodes = [ {
-                "name": "Test",
-                "ws": "wss://node.cocos-terminal.com/wss",
-                "faucetUrl": "https://faucet.cocosbcx.net",
-                "chainId": "6057d856c398875cac2650fe33caef3d5f6b403d184c5154abbff526ec1143c4",
-                "coreAsset": "COCOS",
-                "type": "0",
-                "isForce": false
-            }];
-            // await axios
-            //     .get("https://api-cocosbcx.cocosbcx.net/backend/getParams")
-            //     .then(response => {
-            //         commit('loading', false, {
-            //             root: true
-            //         })
-            //         if(response.data.data[0].name == "Main"){
-            //             nodes = [response.data.data[0]];
-            //             Storage.set("node", nodes);
-            //         }
-            //     })
-            //     .catch(function (error) {
-            //         console.log(error);
-            //         commit('loading', false, {
-            //             root: true
-            //         })
-            //     });
+            commit('loading', true, {
+                root: true
+            })
+            let nodes = [];
+            await axios
+                .get("https://api-cocosbcx.cocosbcx.net/backend/getParams")
+                .then(response => {
+                    commit('loading', false, {
+                        root: true
+                    })
+                    if(response.data.data[0].name == "Main"){
+                        nodes = [response.data.data[0]];
+                        Storage.set("node", nodes);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    commit('loading', false, {
+                        root: true
+                    })
+                });
             Storage.set("node", nodes);
             return nodes;
         } catch (e) {

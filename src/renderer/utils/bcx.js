@@ -8,15 +8,15 @@ function GetNewBCX() {
   let nodes = Storage.get('node')
 
   if (!nodes || nodes.length < 1) {
-    nodes =[ {
-      "name": "Test",
-      "ws": "wss://node.cocos-terminal.com/wss",
-      "faucetUrl": "https://faucet.cocosbcx.net",
-      "chainId": "6057d856c398875cac2650fe33caef3d5f6b403d184c5154abbff526ec1143c4",
-      "coreAsset": "COCOS",
-      "type": "0",
-      "isForce": false
-  }];
+    nodes = [{
+      chainId: "6057d856c398875cac2650fe33caef3d5f6b403d184c5154abbff526ec1143c4",
+      coreAsset: "COCOS",
+      faucetUrl: "https://faucet.cocosbcx.net",
+      name: "COCOS Main",
+      type: "1",
+      ws: "wss://api.cocosbcx.net",
+      choose: true
+    }];
   }
   let Node;
   let choose = Storage.get('choose_node')

@@ -70,24 +70,6 @@ export default {
         }
       }
     },
-    changePasswordAccounts(state, pwd) {
-      const {
-        oldpwd,
-        newpwd
-      } = pwd
-      for (var i = 0, len = state.accounts.length; i < len; i++) {
-        if (state.accounts[i].keystore) {
-          let privateKey = utils.decrypt(
-            state.accounts[i].keystore,
-            oldpwd
-          )
-          state.accounts[i].keystore = utils.encrypt(
-            privateKey,
-            newpwd
-          )
-        }
-      }
-    }
   },
 
   actions: {
@@ -96,16 +78,13 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },parmas) {
       commit('loading', true, {
         root: true
       })
       try {
         let resData
-        await NewBCX.createAccountWithWallet({
-          account: rootState.cocosAccount.accounts,
-          password: rootState.cocosAccount.passwords
-        }).then(res => {
+        await NewBCX.createAccountWithWallet(parmas).then(res => {
           commit('loading', false, {
             root: true
           })
@@ -137,17 +116,13 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },parmas) {
       commit('loading', true, {
         root: true
       })
       try {
         let resData
-        await NewBCX.createAccountWithPassword({
-          account: rootState.cocosAccount.accounts,
-          password: rootState.cocosAccount.passwords,
-          autoLogin: true
-        }).then((res) => {
+        await NewBCX.createAccountWithPassword(parmas).then((res) => {
           commit('loading', false, {
             root: true
           })

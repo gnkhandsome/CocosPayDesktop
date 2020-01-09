@@ -62,9 +62,6 @@ export default  {
     setIsImportKeys(state, isImportKeys) {
       state.isImportKeys = isImportKeys
     },
-    setPassword(state, Password) {
-      state.Password = Password
-    },
     setLogin(state, isLogin) {
       console.log("setLogin",isLogin)
       state.isLogin = isLogin
@@ -107,16 +104,6 @@ export default  {
         const keystore = utils.encrypt(state.currentAccount.privateKey, password)
         state.currentAccount.keystore = keystore
         state.currentAccount.privateKey = ''
-      }
-    },
-    changePassword(state, pwd) {
-      const {
-        oldpwd,
-        newpwd
-      } = pwd
-      if (state.currentAccount.keystore) {
-        let privateKey = utils.decrypt(state.currentAccount.keystore, oldpwd)
-        state.currentAccount.keystore = utils.encrypt(privateKey, newpwd)
       }
     },
   }
