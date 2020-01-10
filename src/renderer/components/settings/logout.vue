@@ -30,9 +30,6 @@ export default {
     ...mapActions("wallet", ["deleteWallet"]),
     logout() {
       if (window.timers) clearTimeout(window.timers);
-      // this.accountType === "wallet"
-      //   ? this.deleteWallet()
-      //   : this.logoutBCXAccount();
       Promise.all([this.deleteWallet(), this.logoutBCXAccount()]).then(res => {
         this.$router.replace({ name: "initAccount" });
       });

@@ -48,12 +48,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(["privateKeys", "temporaryKeys", , "cocosAccount"])
+    ...mapState(["privateKeys", "temporaryKeys", , "currentAccount"])
   },
   methods: {
-    ...mapActions("account", ["OutPutKey"]),
-    ...mapActions("account", ["loginBCXAccount"]),
-    ...mapMutations(["settemporaryKeys", "setKeys", "setAccount"]),
+    ...mapActions("account", ["unlockAccount","OutPutKey"]),
+    ...mapMutations(["settemporaryKeys", "setKeys"]),
     copySuccess(key) {
       clipboard.writeText(key);
       this.$kalert({
@@ -67,15 +66,9 @@ export default {
         });
         return;
       }
-      this.setAccount({
-        account: this.cocosAccount.accounts,
-        password: this.password
-      });
-      this.loginBCXAccount().then(res => {
-        this.setAccount({
-          account: this.cocosAccount.accounts,
-          password: ""
-        });
+      this.unlockAccount({
+                   password:this.password,
+                }).then(res => {   
         if (res.code === 1) {
           this.unlock = false;
         }

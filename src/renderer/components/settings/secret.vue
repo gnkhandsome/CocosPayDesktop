@@ -99,6 +99,7 @@ export default {
             oldPassword: this.formData.oldPassword,
             newPassword: this.formData.password
          }).then(res => {
+            console.info("changePassword res",res);
             if (res.code === 1) {
               this.$kalert({
                 message: this.$i18n.t("alert.modifyPasswordSuccess")

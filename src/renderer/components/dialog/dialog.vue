@@ -7,8 +7,7 @@
       width="700px"
       :close-on-click-modal="false"
       @close="WalletRegister"
-      v-if="Register"
-    >
+      v-if="Register">
       <Create/>
     </el-dialog>
     <el-dialog
@@ -18,8 +17,7 @@
       :close-on-click-modal="false"
       width="700px"
       @close="privateStore"
-      v-if="storeKey"
-    >
+      v-if="storeKey">
       <BackupKey/>
     </el-dialog>
     <el-dialog
@@ -29,8 +27,7 @@
       width="700px"
       :close-on-click-modal="false"
       @close="AccountLogin"
-      v-if="accountLogins"
-    >
+      v-if="accountLogins">
       <Login/>
     </el-dialog>
     <el-dialog
@@ -42,8 +39,7 @@
       :show-close="false"
       :close-on-click-modal="false"
       @close="setUpdate"
-      v-if="updates"
-    >
+      v-if="updates">
       <Update/>
     </el-dialog>
   </div>
@@ -68,18 +64,21 @@ export default {
     ...mapState("common", ["registerWallet", "storePrivate", "accounLogin"]),
     Register: {
       get() {
+        console.info("registerWallet",this.registerWallet);
         return this.registerWallet;
       },
       set() {}
     },
     storeKey: {
       get() {
+        console.info("storePrivate",this.storePrivate);
         return this.storePrivate;
       },
       set() {}
     },
     accountLogins: {
       get() {
+        console.info("accountLogins",this.accounLogin);
         return this.accounLogin;
       },
       set() {}

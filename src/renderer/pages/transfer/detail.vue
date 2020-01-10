@@ -150,7 +150,6 @@ export default {
     Navigation
   },
   computed: {
-    ...mapState(["cocosAccount"])
   },
   async mounted() {
     if (!this.$route.params.id) {

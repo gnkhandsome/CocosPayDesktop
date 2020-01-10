@@ -167,8 +167,8 @@ export default {
         return e
       }
     },
-    // 切换钱包账户
 
+    // 切换钱包账户
     async setCurrentAccount({
       commit
     }, account) {
@@ -188,6 +188,9 @@ export default {
               ]
             })
           }
+          commit('setCurrentAccount', account.account, {
+            root: true
+          })
           resData = res
         })
         return resData
@@ -200,45 +203,24 @@ export default {
       commit
     }) {
       try {
-        // commit('loading', true, {
-        //   root: true
-        // })
         let resData
         await NewBCX.deleteWallet().then(res => {
           commit('loading', false, {
             root: true
           })
-          commit('setIsAccount', false, {
+          commit('setCurrentAccount', '', {
             root: true
           })
-          commit(
-            'setAccount', {
-              account: '',
-              password: ''
-            }, {
-              root: true
-            }
-          )
+          commit('setIsLocked', false, {
+            root: true
+          })
           commit('setAccountType', '', {
-            root: true
-          })
-          commit('setIsImportKeys', false, {
             root: true
           })
           commit('setLogin', false, {
             root: true
           })
           resData = res
-          // if (res.code !== 1) {
-          //   Alert({
-          //     message: CommonJs.getI18nMessages(I18n).error[
-          //       res.code
-          //     ]
-          //   })
-          // }
-          // router.replace({
-          //   name: 'initAccount'
-          // })
         })
         return resData
       } catch (e) {
@@ -250,59 +232,16 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },parmas) {
       commit('loading', true, {
         root: true
       })
       try {
-        var resData
-        setTimeout(() => {
+        let resData
+        await NewBCX.importPrivateKey(parmas).then(res => {
           commit('loading', false, {
             root: true
           })
-          if (!resData) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[109]
-            })
-          }
-        }, 10000)
-        await NewBCX.importPrivateKey({
-          privateKey: rootState.privateKeys,
-          password: rootState.cocosAccount.passwords
-        }).then(res => {
-          commit('loading', false, {
-            root: true
-          })
-          if (res.code === 1) {
-            commit('setIsAccount', true, {
-              root: true
-            })
-            commit('setLogin', true, {
-              root: true
-            })
-            if (rootState.accountType !== 'account') {
-              commit('setAccountType', 'wallet', {
-                root: true
-              })
-            }
-          } else {
-            if (rootState.accountAdd && res.code !== 160) {
-              Alert({
-                message: CommonJs.getI18nMessages(I18n).verify.walletPassword
-              })
-              resData = {
-                code: 150
-              }
-              return resData
-            }
-            if (res.code !== 107) {
-              Alert({
-                message: CommonJs.getI18nMessages(I18n).error[
-                  res.code
-                ]
-              })
-            }
-          }
           resData = res
         })
         return resData
@@ -316,15 +255,13 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },parmas) {
       let resData
       commit('loading', true, {
         root: true
       })
       try {
-        await NewBCX.restoreWallet({
-          password: rootState.cocosAccount.passwords
-        }).then(res => {
+        await NewBCX.restoreWallet(parmas).then(res => {
           commit('loading', false, {
             root: true
           })

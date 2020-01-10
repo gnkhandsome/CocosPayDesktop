@@ -2,7 +2,7 @@
   <section>
     <header>
       <span>Signature Request</span>
-      <span>{{cocosAccount.accounts}}</span>
+      <span>{{currentAccount}}</span>
     </header>
     <section class="detail">
       <section class="left">
@@ -12,7 +12,7 @@
       <section class="right">
         <div class="item">
           <span>from</span>
-          <span>{{cocosAccount.accounts}}</span>
+          <span>{{currentAccount}}</span>
         </div>
         <div class="item">
           <span>to</span>
@@ -62,7 +62,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["state", "cocosAccount"]),
+    ...mapState(["state", "currentAccount"]),
     ...mapState("wallet", ["whiteList"]),
     to() {
       return this.payload.toAccount;
@@ -97,7 +97,7 @@ export default {
     }
   },
   mounted() {
-    this.accountsArr.push(this.cocosAccount);
+    this.accountsArr.push(this.currentAccount);
     this.accountsArr.map(async account => {
       this.balances.push({
         account: account.accounts,
@@ -108,7 +108,7 @@ export default {
     let white = whiteList.some(ele => {
       return (
         ele.domain === this.app.origin &&
-        ele.account === this.cocosAccount.accounts
+        ele.account === this.currentAccount
       );
     });
     if (white) {
@@ -123,7 +123,7 @@ export default {
       if (this.checked && !this.isWhite && result) {
         whiteList.push({
           domain: this.app.origin,
-          account: this.cocosAccount.accounts,
+          account: this.currentAccount,
           createTime: this.$moment().format("x")
         });
         Storage.set("whiteList", whiteList);

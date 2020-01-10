@@ -18,6 +18,7 @@ export default {
     }) {
         try {
             await NewBCX.lockAccount().then((res) => {
+                console.info("lockAccount res",res);
                 commit('setIsLocked', true)
                 router.replace({
                     name: 'unlock'
@@ -67,10 +68,8 @@ export default {
                     commit('loading', false, {
                         root: true
                     })
-                    if(response.data.data[0].name == "Main"){
-                        nodes = [response.data.data[0]];
-                        Storage.set("node", nodes);
-                    }
+                nodes = response.data.data;
+                Storage.set("node", nodes);
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -78,7 +77,6 @@ export default {
                         root: true
                     })
                 });
-            Storage.set("node", nodes);
             return nodes;
         } catch (e) {
             console.log(e);
@@ -183,7 +181,7 @@ export default {
         if (process.platform !== "darwin") {
             try {
                 await axios
-                    .get("http://backend.test.cjfan.net/getPolicyUrl", {
+                    .get("https://api-cocosbcx.cocosbcx.net/backend/getPolicyUrl", {
                         params: {
                             platform: "CocosDesktopWin",
                             channel: 1003,

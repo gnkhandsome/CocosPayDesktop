@@ -128,9 +128,6 @@ export default {
   },
   data() {
     const accountPass = (rule, value, callback) => {
-      // if (this.changeRadio) {
-      //   return false;
-      // }
       if (value === "") {
         this.$kalert({
           message: this.$i18n.t("verify.accountNull")
@@ -142,10 +139,6 @@ export default {
       }
     };
     const validatePass = (rule, value, callback) => {
-      // if (this.changeRadio) {
-      //   return false;
-      // }
-      // let reg = /^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{8,12}$/;
       if (value === "") {
         this.$kalert({
           message: this.$i18n.t("verify.passwordNull")
@@ -157,9 +150,6 @@ export default {
     };
 
     const keysPass = (rule, value, callback) => {
-      // if (this.changeRadio) {
-      //   return false;
-      // }
       if (value === "") {
         this.$kalert({
           message: this.$i18n.t("verify.keysNull")
@@ -197,7 +187,6 @@ export default {
   computed: {
     ...mapState("wallet", ["accounts", "pwdhash", "password"]),
     ...mapState([
-      "cocosAccount",
       "LoginCountStore",
       "cocos",
       "accountType",
@@ -213,24 +202,26 @@ export default {
     }
   },
   destroyed() {
-    this.setKeys("");
     this.setAccountAdd(false);
   },
   methods: {
-    ...mapMutations("common", ["AccountLogin"]),
     ...mapMutations([
-      "setCocos",
-      "setAccount",
+      "setAccountType",
+      "setCurrentAccount",
+      "setLogin",
       "setLoginCountStore",
-      "setKeys",
       "setIsImportKeys",
       "setSha",
       "setChangeRadio",
-      "setLogin",
+      "setIsLocked",
       "setAccountAdd"
     ]),
+    ...mapMutations("common", [
+      "privateStore",
+      "AccountLogin"
+    ]),
     ...mapActions("account", [
-      "loginBCXAccount",
+      "passwordLogin",
       "logoutBCXAccount",
       "unlockAccount"
     ]),
@@ -238,7 +229,6 @@ export default {
       "importPrivateKey",
       "LoadWalletFile",
       "createAccountWithPassword",
-      "deleteWallet",
       "RestoreWallet",
       "setSeed",
       "setPassword"
@@ -282,25 +272,19 @@ export default {
         this.LoadWalletFile({ file: this.file }).then(res => {
           if (res.code === 1) {
             this.setSha(res.data.sha1);
-            this.setAccount({
-              account: "",
-              password: this.keyfile_password
-            });
-            this.RestoreWallet().then(result => {
+            this.RestoreWallet({
+               password:this.keyfile_password,
+            }).then(result => {
               if (result.code === 1) {
-                this.setAccount({
-                  account: result.data.account_name,
-                  password: this.keyfile_password
-                });
-                this.unlockAccount().then(unlock => {
+                this.unlockAccount({
+                   password:this.keyfile_password,
+                }).then(unlock => {
                   if (unlock.code === 1) {
-                    this.AccountLogin(false);
                     this.setLogin(true);
-                    this.setAccount({
-                      account: result.data.account_name,
-                      password: ""
-                    });
-                    this.connectSocket();
+                    this.AccountLogin(false);
+                    this.setIsLocked(false);
+                    this.setCurrentAccount(result.data.account_name);
+                    this.setAccountType(result.data.mode);
                     this.$router.push({ name: "home" });
                   }
                 });
@@ -314,92 +298,57 @@ export default {
         });
       }
     },
+
     LoginAccount(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.radio === "account") {
-            this.setAccount({
-              account: this.formData.account,
-              password: this.formData.password
-            });
-            this.accountLogin();
-          } else if (this.radio === "wallet") {
-            this.setAccount({
-              account: this.cocosAccount.accounts
-                ? this.cocosAccount.accounts
-                : "",
-              password: this.formDataWallet.password
-            });
-            if (this.formDataWallet.keys.length < 50) {
-              this.$kalert({
-                message: this.$i18n.t("alert.illegalPrivateKey")
-              });
-              return;
-            }
-            this.setKeys(this.formDataWallet.keys);
-            this.walletLogin();
-          }
-        }
-      });
-    },
-    accountLogin() {
-      this.loginBCXAccount().then(res => {
-        if (res.code === 107) {
-          Promise.all([this.deleteWallet(), this.logoutBCXAccount()]).then(
-            res => {
-              this.setAccount({
-                account: this.formData.account,
-                password: this.formData.password
-              });
-              this.accountLogin();
-            }
-          );
-          return;
-        }
-        if (res.code === 1) {
-          // this.IndexedDBAdd({ name: this.formData.account });
-          this.connectSocket();
-          this.setAccount({
+           this.passwordLogin({
             account: this.formData.account,
-            password: ""
-          });
-          if (this.remember) {
-            this.setLoginCountStore(this.formData.account);
+            password: this.formData.password
+            }).then(res => {
+                console.info("passwordLogin",res);
+                if(res.code == 1){
+                this.setLogin(true);
+                this.setIsLocked(false);
+                this.setCurrentAccount(res.data.account_name);
+                this.setAccountType(res.data.mode);
+                this.AccountLogin(false);
+                this.$router.push({ name: "home" });
+                }else{
+
+                }
+            });
+            return
           }
-          this.AccountLogin(false);
-          this.$router.push({ name: "home" });
+          if (this.formDataWallet.keys.length < 50) {
+            this.$kalert({
+              message: this.$i18n.t("alert.illegalPrivateKey")
+            });
+            return;
+          }
+          console.log("privateKey",this.formDataWallet.keys)
+          console.log("password",this.formDataWallet.password)
+          this.importPrivateKey({
+            privateKey: this.formDataWallet.keys,
+            password: this.formDataWallet.password
+          }).then(res => {
+             console.info("importPrivateKey",res);
+            if (res.code === 1) {
+                this.setLogin(true);
+                this.setIsLocked(false);
+                this.setCurrentAccount(res.data.account_name);
+                this.setAccountType(res.data.mode);
+                this.AccountLogin(false);
+                this.$router.push({ name: "home" });
+            }else{
+
+            }
+            this.connectSocket()
+          });
         }
       });
     },
-    walletLogin() {
-      this.importPrivateKey().then(res => {
-        if (res.code === 107) {
-          Promise.all([this.deleteWallet(), this.logoutBCXAccount()]).then(
-            res => {
-              this.setAccount({
-                account: this.cocosAccount.accounts
-                  ? this.cocosAccount.accounts
-                  : "",
-                password: this.formDataWallet.password
-              });
-              this.walletLogin();
-            }
-          );
-          return;
-        }
-        if (res.code === 1) {
-          this.setKeys("");
-          this.setIsImportKeys(true);
-          this.AccountLogin(false);
-          this.$router.push({ name: "home" });
-          this.setAccount({
-            account: res.data.account_name,
-            password: ""
-          });
-          this.connectSocket();
-        }
-      });
-    }
   }
 };
 </script>

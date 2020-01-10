@@ -59,29 +59,21 @@ export default {
     };
   },
   computed: {
-    ...mapState(["cocosAccount"])
+    ...mapState(["currentAccount"])
   },
   name: "import",
   methods: {
     ...mapActions("account", ["importPrivateKey"]),
-    ...mapMutations(["setAccount", "setKeys", "setIsImportKeys"]),
+    ...mapMutations(["setKeys", "setIsImportKeys"]),
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.setAccount({
-            account: this.cocosAccount.accounts,
-            password: this.formData.password
-          });
           this.setKeys(this.formData.keys);
           this.importPrivateKey().then(res => {
             if (res.code === 1) {
               this.setIsImportKeys(true);
               this.$kalert({
                 message: this.$i18n.t("alert.importSuccess")
-              });
-              this.setAccount({
-                account: this.cocosAccount.accounts,
-                password: ""
               });
               this.setKeys("");
               setTimeout(() => {

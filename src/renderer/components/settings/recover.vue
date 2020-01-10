@@ -32,6 +32,7 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 import Cocos from "../../models/cocos";
 import CommonJs from "../../config/common";
+import I18n from '../../languages'
 export default {
   name: "recover",
   data() {
@@ -53,14 +54,15 @@ export default {
     };
   },
   computed: {
-    ...mapState(["cocosAccount", "sha"])
+    ...mapState(["currentAccount", "sha"])
   },
   methods: {
     ...mapMutations([
       "setSha",
-      "setAccount",
       "setIsLocked",
       "setLogin",
+      "setCurrentAccount",
+      "setAccountType",
       "setCocos"
     ]),
     ...mapActions("wallet", ["deleteWallet", "RestoreWallet"]),
@@ -106,19 +108,17 @@ export default {
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.setAccount({
-            account: this.cocosAccount.accounts,
-            password: this.formDataWallet.password
-          });
-          this.RestoreWallet().then(result => {
+          this.RestoreWallet({password:formDataWallet.password}).then(result => {
             if (result.code === 1) {
-              this.unlockAccount().then(unlock => {
+              this.unlockAccount({
+                   password:this.formDataWallet.password,
+                }).then(unlock => {
                 if (unlock.code === 1) {
                   this.setLogin(true);
-                  this.setAccount({
-                    account: result.data.account_name,
-                    password: ""
-                  });
+                  this.setIsLocked(false);
+                  this.setCurrentAccount(result.data.account_name);
+                  this.setAccountType(result.data.mode);
+
                   if (!this.cocos) {
                     const cocos = Cocos.placeholder();
                     this.setCocos(cocos);

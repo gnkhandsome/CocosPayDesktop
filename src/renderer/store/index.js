@@ -31,16 +31,7 @@ export default new Vuex.Store({
     },
     accountType: '',
     networks: defaultNetworks.networks,
-    currentAccount: {
-      address: '',
-      name: '',
-      privateKey: '',
-      keystore: ''
-    },
-    cocosAccount: {
-      accounts: '',
-      passwords: ''
-    },
+    currentAccount: '',
     privateKeys: '',
     temporaryKeys: '',
     currentCreateAccount: {

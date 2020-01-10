@@ -41,9 +41,9 @@ export default  {
     loading(state, loading) {
       state.loading = loading
     },
-    setKeys(state, privateKeys) {
-      state.privateKeys = Array.isArray(privateKeys) ? privateKeys[0] : privateKeys
-    },
+    // setKeys(state, privateKeys) {
+    //   state.privateKeys = Array.isArray(privateKeys) ? privateKeys[0] : privateKeys
+    // },
     settemporaryKeys(state, temporaryKeys) {
       state.temporaryKeys = Array.isArray(temporaryKeys) ? temporaryKeys[0] : temporaryKeys
     },
@@ -72,12 +72,8 @@ export default  {
     setSha(state, sha) {
       state.sha = sha
     },
-    setAccount(state, cocosAccount) {
-      state.cocosAccount.accounts = cocosAccount.account
-      state.cocosAccount.passwords = cocosAccount.password
-    },
-    setCurrentAccount(state, account) {
-      state.currentAccount = Object.assign({}, account)
+    setCurrentAccount(state, account_name) {
+      state.currentAccount = account_name
     },
     setCurrentCreateAccount(state, account) {
       state.currentCreateAccount = account

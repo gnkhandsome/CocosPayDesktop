@@ -53,8 +53,7 @@
     >
       <transfer
         @cancelDialog="cancelDialog"
-        :cocosAccount="cocosAccount"
-        :fee="fee"
+        :currentAccount="this.currentAccount"
         :coin="coin"
         :formData="formData"
       />
@@ -80,7 +79,7 @@ export default {
           message: this.$i18n.t("verify.toAddressNull")
         });
         callback(new Error());
-      } else if (value === this.cocosAccount.accounts) {
+      } else if (value === this.currentAccount) {
         this.$kalert({
           message: this.$i18n.t("message.ownerError")
         });
@@ -140,11 +139,10 @@ export default {
       tokens: [],
       assetKey: this.$route.params.assetKey ? this.$route.params.assetKey : "",
       coins: [],
-      fee: ""
     };
   },
   computed: {
-    ...mapState(["cocosAccount", "cocosCount", "accountType"]),
+    ...mapState(["currentAccount", "cocosCount", "accountType"]),
     ...mapState("wallet", ["accounts"]),
     ...mapState("trans", ["tranferInfo"]),
     payName() {
@@ -173,28 +171,23 @@ export default {
     // this.loadTokens()
   },
   methods: {
-    ...mapMutations("trans", ["setAccount"]),
+    ...mapMutations("trans", ["setTranferInfo"]),
     ...mapActions("trans", [
       "tranferBCX",
-      "queryTranferRate",
       "queryAsset",
-      "tranferBCXFree"
     ]),
-    ...mapActions("account", ["UserAccount", "OutPutKey"]),
+    ...mapActions("account", ["queryAccountBalances", "OutPutKey"]),
     async changeCoin() {
       await this.queryAsset({ assetId: this.coin }).then(res => {
         this.precision = res.precision;
-      });
-      await this.queryTranferRate({ feeAssetId: "COCOS" }).then(res => {
-        this.fee = res.data.fee_amount.toFixed(this.precision);
       });
     },
     refresh() {
       this.loading();
     },
     async loading() {
-      this.formData.from = this.cocosAccount.accounts;
-      await this.UserAccount().then(res => {
+      this.formData.from = this.currentAccount;
+      await this.queryAccountBalances().then(res => {
         if (res.code === 1) {
           if (Array.isArray(res.data)) {
             this.coins = res.data;
@@ -212,40 +205,17 @@ export default {
       this.changeCoin();
     },
     onSubmit(formName) {
+      console.info("submit transfer info");
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.setAccount({
+          console.info("setTranferInfo");
+          this.setTranferInfo({
             toAccount: this.formData.to,
             coin: this.coin,
             amount: this.formData.amount,
             memo: this.formData.memo
           });
-          this.tranferBCXFree().then(res => {
-            this.fee = res.data.fee_amount.toFixed(this.precision);
-            if (this.owner) {
-              this.$kalert({
-                message: this.$i18n.t("verify.ownerKey")
-              });
-              return;
-            } else if (
-              (this.coin === "COCOS" &&
-                res.data.fee_amount + Number(this.formData.amount) <
-                  this.cocosCount) ||
-              res.data.fee_amount + Number(this.formData.amount) ===
-                this.cocosCount
-            ) {
-              this.popup = true;
-            } else if (
-              this.coin !== "COCOS" &&
-              res.data.fee_amount < this.cocosCount
-            ) {
-              this.popup = true;
-            } else {
-              this.$kalert({
-                message: this.$i18n.t("alert.transferFail")
-              });
-            }
-          });
+        this.popup = true;
         }
       });
     },

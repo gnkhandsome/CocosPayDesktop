@@ -2,7 +2,7 @@
   <section class="popup">
     <div class="item">
       <label class="label">{{$t('label.ownerAccount')}}：</label>
-      <div class="content">{{cocosAccount.accounts}}</div>
+      <div class="content">{{currentAccount}}</div>
     </div>
     <div class="item">
       <label class="label">{{$t('label.toAddress')}}：</label>
@@ -19,13 +19,6 @@
       <label class="label">{{$t('label.memo')}}：</label>
       <div class="content memo">{{formData.memo}}</div>
     </div>
-    <div class="item">
-      <label class="label">{{$t('label.charge')}}：</label>
-      <div class="content">
-        {{fee}} COCOS
-        <span class="test-coin">({{$t('title.test')}})</span>
-      </div>
-    </div>
     <section class="mt70 flex">
       <el-button @click="cancelDialog">{{$t('button.cancel')}}</el-button>
       <el-button type="primary" @click="surePay">{{$t('button.surePay')}}</el-button>
@@ -36,25 +29,26 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   name: "Dialog",
-  props: ["cocosAccount", "formData", "fee", "coin"],
+  props: ["currentAccount", "formData", "coin"],
   methods: {
-    ...mapMutations("trans", ["setAccount"]),
-    ...mapActions("trans", ["tranferBCX", "queryTranferRate"]),
+    ...mapMutations("trans", ["setTranferInfo"]),
+    ...mapActions("trans", ["tranferBCX"]),
     surePay() {
-      this.setAccount({
+      this.setTranferInfo({
         toAccount: this.formData.to,
         coin: this.coin,
         amount: this.formData.amount,
         memo: this.formData.memo
       });
       this.tranferBCX().then(res => {
+        console.info('transferAsset res',res);
         if (res.code === 1) {
-          this.$kalert({
-            message: this.$i18n.t("alert.tranferSuccess")
-          });
           setTimeout(() => {
+            this.$kalert({
+            message: this.$i18n.t("alert.tranferSuccess")
+            });
             this.$router.push({ name: "home" });
-          }, 300);
+          }, 200);
         }
       });
     },

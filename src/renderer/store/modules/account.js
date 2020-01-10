@@ -32,19 +32,13 @@ export default {
           commit('loading', false, {
             root: true
           })
-          commit('setIsAccount', false, {
+          commit('setCurrentAccount', '', {
             root: true
           })
-          commit('setAccount', {
-            account: '',
-            password: ''
-          }, {
+          commit('setIsLocked', false, {
             root: true
           })
           commit('setAccountType', '', {
-            root: true
-          })
-          commit('setIsImportKeys', false, {
             root: true
           })
           commit('setLogin', false, {
@@ -62,16 +56,13 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },params) {
       try {
         let resData
         commit('loading', true, {
           root: true
         })
-        await NewBCX.changePassword({
-          oldPassword: rootState.Password.oldPassword,
-          newPassword: rootState.Password.newPassword
-        }).then((res) => {
+        await NewBCX.changePassword(params).then((res) => {
           commit('loading', false, {
             root: true
           })
@@ -120,31 +111,22 @@ export default {
         return e
       }
     },
+
     async unlockAccount({
       commit,
       state,
       rootState
-    }) {
+    },params) {
       commit('loading', true, {
         root: true
       })
       try {
         let resData
-        await NewBCX.unlockAccount({
-          password: rootState.cocosAccount.passwords
-        }).then((res) => {
+        await NewBCX.unlockAccount(params).then((res) => {
           commit('loading', false, {
             root: true
           })
-          commit('setIsAccount', false, {
-            root: true
-          })
-          if (res.code !== 1 && !rootState.loginNoAlert) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[res.code]
-            })
-          }
-          commit('setLoginNoAlert', false, {
+          commit('setIsLocked', false, {
             root: true
           })
           resData = res
@@ -154,61 +136,22 @@ export default {
         return e
       }
     },
+
     // 登陆账户
-    async loginBCXAccount({
+    async passwordLogin({
       commit,
       state,
       rootState
-    }) {
+    },params) {
       commit('loading', true, {
         root: true
       })
       try {
         let resData
-        await NewBCX.passwordLogin({
-          account: rootState.cocosAccount.accounts,
-          password: rootState.cocosAccount.passwords
-        }).then((res) => {
-          if (res.code === 1) {
-            // const request = window.indexedDB.open('store', 1);
-            // request.onupgradeneeded = function (event) {
-            //   var db = event.target.result;
-            //   var objectStore = db.createObjectStore('name', {
-            //     keyPath: 'id',
-            //     autoIncrement: true
-            //   });
-            // }
-            // request.onsuccess = function (event) {
-            //   var db = event.target.result;
-            //   var transaction = db.transaction(['store'], 'readwrite');
-            //   var objectStore = transaction.objectStore('store');
-            //   objectStore.add({
-            //     name: 'a',
-            //     age: 10
-            //   });
-            //   objectStore.add({
-            //     name: 'b',
-            //     age: 20
-            //   });
-            // }
-          }
-
+        await NewBCX.passwordLogin(params).then((res) => {
           commit('loading', false, {
             root: true
           })
-          commit('setLogin', true, {
-            root: true
-          })
-          commit('setAccountType', 'account', {
-            root: true
-          })
-          if (res.code !== 1 && res.code !== 107) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[
-                res.code
-              ]
-            })
-          }
           resData = res
         })
         return resData
@@ -238,16 +181,13 @@ export default {
       commit,
       state,
       rootState
-    }) {
+    },params) {
       commit('loading', true, {
         root: true
       })
       try {
         let resData
-        await NewBCX.importPrivateKey({
-          privateKey: rootState.privateKeys,
-          password: rootState.cocosAccount.passwords
-        }).then(res => {
+        await NewBCX.importPrivateKey(params).then(res => {
           commit('loading', false, {
             root: true
           })
@@ -277,7 +217,7 @@ export default {
       })
       try {
         await NewBCX.queryAccountInfo({
-          account: rootState.cocosAccount.accounts
+          account: rootState.currentAccount
         }).then(res => {
           commit('loading', false, {
             root: true
@@ -295,7 +235,7 @@ export default {
       }
     },
     // 查询账户资产
-    async UserAccount({
+    async queryAccountBalances({
       commit,
       state,
       rootState
@@ -307,8 +247,9 @@ export default {
       try {
         await NewBCX.queryAccountBalances({
           unit: '',
-          account: rootState.cocosAccount.accounts
+          account: rootState.currentAccount
         }).then(res => {
+          console.info("queryAccountBalances res",res);
           commit('loading', false, {
             root: true
           })

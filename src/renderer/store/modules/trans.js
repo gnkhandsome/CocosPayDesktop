@@ -24,7 +24,7 @@ export default {
   },
 
   mutations: {
-    setAccount(state, tranferInfo) {
+    setTranferInfo(state, tranferInfo) {
       state.tranferInfo = tranferInfo
     },
     setTranferList(state, tranferList) {
@@ -44,13 +44,13 @@ export default {
         })
         let resData
         await NewBCX.transferAsset({
-          fromAccount: rootState.cocosAccount.accounts,
+          fromAccount: rootState.currentAccount,
           toAccount: state.tranferInfo.toAccount,
           amount: state.tranferInfo.amount,
           memo: state.tranferInfo.memo,
           assetId: state.tranferInfo.coin,
           isPropos: false,
-          onlyGetFee: false
+          isEncryption:false
         }).then((res) => {
           commit('loading', false, {
             root: true
@@ -67,68 +67,7 @@ export default {
         return e
       }
     },
-    //获取转账手续费
-    async tranferBCXFree({
-      commit,
-      state,
-      rootState
-    }) {
-      try {
-        commit('loading', true, {
-          root: true
-        })
-        let resData;
-        await NewBCX.transferAsset({
-          fromAccount: rootState.cocosAccount.accounts,
-          toAccount: state.tranferInfo.toAccount,
-          amount: state.tranferInfo.amount,
-          memo: state.tranferInfo.memo,
-          assetId: state.tranferInfo.coin,
-          isPropose: false,
-          onlyGetFee: true
-        }).then((res) => {
-          commit('loading', false, {
-            root: true
-          })
-          if (res.code !== 1) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[res.code]
-            })
-          }
-          resData = res;
-        })
-        return resData
-      } catch (e) {
-        return e
-      }
-    },
-    //合约手续费查询
-    async callContractFunctionFree({
-      commit,
-      state
-    }, params) {
-      try {
-        commit('loading', true, {
-          root: true
-        })
-        params.onlyGetFee = true
-        let resData;
-        await NewBCX.callContractFunction(params).then((res) => {
-          commit('loading', false, {
-            root: true
-          })
-          if (res.code !== 1) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[res.code]
-            })
-          }
-          resData = res;
-        })
-        return resData
-      } catch (e) {
-        return e
-      }
-    },
+  
     //查询链上资产精度
     async queryAsset({
       commit
@@ -156,34 +95,7 @@ export default {
 
       }
     },
-    // 查询手续费
-    async queryTranferRate({
-      commit
-    }, params) {
-      try {
-        commit('loading', true, {
-          root: true
-        })
-        let resData
-        await NewBCX.queryTransactionBaseFee({
-          transactionType: 'transfer',
-          feeAssetId: params.feeAssetId
-        }).then((res) => {
-          commit('loading', false, {
-            root: true
-          })
-          if (res.code !== 1) {
-            Alert({
-              message: CommonJs.getI18nMessages(I18n).error[res.code]
-            })
-          }
-          resData = res
-        })
-        return resData
-      } catch (e) {
-        return e
-      }
-    },
+
     //转移NH资产
     async transferNHAsset({
       commit,
@@ -216,7 +128,7 @@ export default {
       try {
         let resData = []
         let params = {
-          account: rootState.cocosAccount.accounts,
+          account: rootState.currentAccount,
           limit: state.tranferList.limit,
           startId: state.tranferList.startId,
           endId: state.tranferList.endId || ''
@@ -228,6 +140,7 @@ export default {
           delete params.startId
         }
         await NewBCX.queryAccountOperations(params).then((res) => {
+          console.info("queryAccountOperations res",res);
           commit('loading', false, {
             root: true
           })

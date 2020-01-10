@@ -2,16 +2,6 @@
   <section id="init">
     <header>
       <img src="../../assets/img/logo.png" @click="logoutBCXAccount" alt />
-      <!-- <section class="select-lang no-bg">
-        <el-select class="language-select" v-model="lang" @change="changeLanguage">
-          <el-option
-            v-for="(item, index) in langs"
-            :key="index"
-            :label="item.name"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </section> -->
     </header>
     <section class="des-center" @click="logoutBCXAccount()">{{$t('title.title')}}</section>
     <section class="introduction">{{$t('message.intro')}}</section>
@@ -23,8 +13,9 @@
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import Storage from "../../utils/storage";
 import { remote, ipcRenderer } from "electron";
+  import Storage from "./../../utils/storage.js";
+
 export default {
   data() {
     return {
@@ -38,37 +29,31 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentCreateAccount", "firstLanguage", "curLng"]),
-    ...mapState("common", ["registerWallet"])
+    ...mapState("common", ["registerWallet"]),
+    ...mapState([ "firstLanguage", "curLng","currentAccount","isLocked"]),
+    ...mapMutations([
+      "setIsLocked",
+    ]),
   },
   created() {
+    //todo 链接节点：如果无当前选中节点则默认链接主节点
+    this.jumpHome();
     this.nodeLists().then(res => {
       if (!Array.isArray(res)) return;
-      res[0].connect = true;
-      this.apiConfig(res[0]).then(() => {
+      var initNode = Storage.get("choose_node");
+      if(initNode){
+        initNode.connect = true;
+      }else {
+        initNode = res[0];
+        initNode.connect = true;
+      }
+      this.apiConfig(initNode).then(() => {
         this.init().then(() => {
-          this.getAccounts().then(account => {
-            console.info("getAccounts res",account);
-            if (
-              account.current_account &&
-              account.current_account.account_name
-            ) {
-              this.setAccountType(account.current_account.mode);
-              this.setAccount({
-                account: account.current_account.account_name,
-                password: ""
-              });
-              this.setLogin(true);
-              this.$router.replace({ name: "home" });
-            }
           });
         });
       });
-    });
   },
   mounted() {
-    // this.UpdateVersion();
-    // this.IndexedDBQuery()
     console.log(this.firstLanguage);
     console.log(this.curLng);
 
@@ -92,16 +77,14 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "setCurrentAccount",
-      "setCurrentCreateVisible",
-      "setAccount",
       "setAccountType",
       "setLogin",
       "setCurLng",
       "setUpdate",
       "setFirstLanguage"
     ]),
-    ...mapActions("wallet", ["getAccounts", "deleteWallet", "addAccount"]),
+
+    ...mapActions("wallet", ["getAccounts"]),
     ...mapActions([
       "nodeLists",
       "apiConfig",
@@ -113,7 +96,6 @@ export default {
     ...mapActions("account", ["logoutBCXAccount"]),
     ...mapMutations("common", [
       "WalletRegister",
-      "privateStore",
       "AccountLogin"
     ]),
     changeLanguage(e) {
@@ -121,31 +103,27 @@ export default {
       this.$i18n.locale = this.lang;
       this.setCurLng(this.lang);
     },
-    closedDialog() {
-      this.currentCreateVisible = false;
-    },
     RegisterAccount() {
       this.WalletRegister(true);
-      // this.$router.push({ name: "createAccount" });
     },
     importAccount() {
-      // this.currentCreateVisible = true;
       this.AccountLogin(true);
     },
-    accountLogin() {
-      this.$router.push({ name: "login" });
-    },
-    keysAccount() {
-      this.$router.push({ name: "importAccount" });
-    },
-    jumpHome() {
-      this.setCurrentCreateVisible(false);
-      this.addAccount(this.currentCreateAccount);
-      this.setCurrentAccount(this.currentCreateAccount);
-      this.$router.push({ name: "home" });
+    jumpHome(){
+      if (!this.currentAccount){
+            return
+         }
+         if (this.isLocked) {
+            this.$router.replace({ name: "unlock" });
+            return
+         }
+        this.setIsLocked(false)
+        this.setLogin(true);
+        this.$router.replace({ name: "home" });
     }
   }
 };
+
 </script>
 <style lang="scss" scoped>
 @import "../../theme/v1/variable";

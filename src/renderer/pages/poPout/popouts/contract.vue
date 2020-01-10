@@ -2,7 +2,7 @@
   <section>
     <header>
       <span>Signature Request</span>
-      <span>{{cocosAccount.accounts}}</span>
+      <span>{{currentAccount}}</span>
     </header>
     <section class="detail" v-if="popupType === apiActions.CALLCONTRACTFUNCTION">
       <section class="left">
@@ -12,7 +12,7 @@
       <section class="right">
         <div class="item">
           <span>from</span>
-          <span>{{cocosAccount.accounts}}</span>
+          <span>{{currentAccount}}</span>
         </div>
         <div class="item">
           <span>contract</span>
@@ -59,7 +59,7 @@
     <section class="detail" v-if="popupType === apiActions.FILL_NH_ASSET_ORDER">
       <section class="left">
         <p>account & {{$t('label.operation')}}</p>
-        <p>{{cocosAccount.accounts}} -> fillNHAssetOrder</p>
+        <p>{{currentAccount}} -> fillNHAssetOrder</p>
       </section>
       <section class="right">
         <div class="item">
@@ -71,7 +71,7 @@
     <section class="detail" v-if="popupType === apiActions.CANCEL_NH_ASSET_ORDER">
       <section class="left">
         <p>account & {{$t('label.operation')}}</p>
-        <p>{{cocosAccount.accounts}} -> cancelNHAssetOrder</p>
+        <p>{{currentAccount}} -> cancelNHAssetOrder</p>
       </section>
       <section class="right">
         <div class="item">
@@ -83,7 +83,7 @@
     <section class="detail" v-if="popupType === apiActions.TRANSFER_NH_ASSET">
       <section class="left">
         <p>account & {{$t('label.operation')}}</p>
-        <p>{{cocosAccount.accounts}} -> transferNHAsset</p>
+        <p>{{currentAccount}} -> transferNHAsset</p>
       </section>
       <section class="right">
         <div class="item">
@@ -130,7 +130,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["state", "cocosAccount", "isLocked"]),
+    ...mapState(["state", "currentAccount", "isLocked"]),
     app() {
       return AuthorizedApp.fromJson(this.payload);
     }
@@ -140,7 +140,7 @@ export default {
     let white = whiteList.some(ele => {
       return (
         ele.domain === this.app.origin &&
-        ele.account === this.cocosAccount.accounts
+        ele.account === this.currentAccount
       );
     });
     if (white) {
@@ -155,7 +155,7 @@ export default {
       if (this.checked && !this.isWhite && result) {
         whiteList.push({
           domain: this.app.origin,
-          account: this.cocosAccount.accounts,
+          account: this.currentAccount,
           createTime: this.$moment().format("x")
         });
         Storage.set("whiteList", whiteList);

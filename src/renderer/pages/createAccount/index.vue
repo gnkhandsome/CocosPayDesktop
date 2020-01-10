@@ -47,7 +47,6 @@
     <section
       v-if="radio === 'wallet'"
       class="small-tip text-center red mt30"
-      @click="deleteWallet"
     >{{$t('message.wallet')}}</section>
     <section v-if="radio === 'account'" class="text-center red mt20">{{$t('message.account')}}</section>
   </section>
@@ -156,70 +155,65 @@ export default {
   methods: {
     ...mapMutations([
       "setCurLng",
-      "setAccount",
       "setAccountType",
+      "setCurrentAccount",
+      "setLogin",
+      "setIsLocked",
       "settemporaryKeys",
       "setKeys",
       "setChangeRadio",
       "setCocos",
-      "loading",
-      "setLogin"
+      "loading"
     ]),
     ...mapMutations("common", [
-      "WalletRegister",
-      "privateStore",
-      "AccountLogin"
+      "WalletRegister"
     ]),
     ...mapActions("account", [
-      "loginBCXAccount",
       "logoutBCXAccount",
       "OutPutKey"
     ]),
     ...mapActions("wallet", [
       "createAccountWithWallet",
       "createAccountWithPassword",
-      "deleteWallet",
       "importPrivateKey",
       "OutWalletPutKey"
     ]),
     createWallet(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-
-          this.deleteWallet().then(res => {
-          console.log("deleteWallet",res)
-          });
          let createParams = {
               account: this.formData.account,
               password: this.formData.password
-            }
+          }
           if (this.radio === "account") {
             this.createAccountWithPassword(createParams).then(res => { 
               console.log("createAccountWithPassword",res);
               if (res.code === 1) {
                 this.setLogin(true);
-                SocketService.initialize();
+                this.setIsLocked(false)
+                this.setCurrentAccount(res.data.account_name)
+                this.setAccountType(res.data.mode)
                 this.WalletRegister(false);
-                this.setAccount({
-                  account: this.formData.account,
-                  password: ""
-                });
-                if (!this.cocos) {
-                  const cocos = Cocos.placeholder();
-                  this.setCocos(cocos);
-                } else if (!(this.cocos instanceof Cocos)) {
-                  let sfj = JSON.parse(JSON.stringify(this.cocos));
-                  const cocos = Cocos.fromJson(sfj);
-                  this.setCocos(cocos);
-                }
                 this.$router.push({ name: "home" });
-                this.OutPutKey().then(key => {
-                  if (key.code === 1) {
-                    this.settemporaryKeys(key.data.active_private_keys);
-                    this.setKeys(key.data.owner_private_keys);
-                    this.privateStore(true);
-                  }
-                });
+               
+                // SocketService.initialize();
+              
+                // if (!this.cocos) {
+                //   const cocos = Cocos.placeholder();
+                //   this.setCocos(cocos);
+                // } else if (!(this.cocos instanceof Cocos)) {
+                //   let sfj = JSON.parse(JSON.stringify(this.cocos));
+                //   const cocos = Cocos.fromJson(sfj);
+                //   this.setCocos(cocos);
+                // }
+                
+                // this.OutPutKey().then(key => {
+                //   if (key.code === 1) {
+                //     this.settemporaryKeys(key.data.active_private_keys);
+                //     this.setKeys(key.data.owner_private_keys);
+                //     this.privateStore(true);
+                //   }
+                // });
               }
             });
             return;
@@ -227,27 +221,16 @@ export default {
           this.createAccountWithWallet(createParams).then(res => {
               console.log("createAccountWithWallet",res);
               if (res.code === 1) {
-                SocketService.initialize();
-                if (!this.cocos) {
-                  const cocos = Cocos.placeholder();
-                  this.setCocos(cocos);
-                } else if (!(this.cocos instanceof Cocos)) {
-                  let sfj = JSON.parse(JSON.stringify(this.cocos));
-                  const cocos = Cocos.fromJson(sfj);
-                  this.setCocos(cocos);
-                }
-                this.OutWalletPutKey().then(key => {
-                  if (key.code === 1) {
-                    this.settemporaryKeys(key.data.active_private_keys);
-                    this.setKeys(key.data.owner_private_keys);
-                    this.privateStore(true);
-                    this.$router.push({ name: "home" });
-                  }
-                });
+                this.setLogin(true);
+                this.setIsLocked(false)
                 this.WalletRegister(false);
+                this.setCurrentAccount(res.data.account_name)
+                this.setAccountType(res.data.mode)
+                this.$router.push({ name: "home" });
+              }else{
+
               }
             });
-          
         }
       });
     },

@@ -3,11 +3,7 @@
     <app-header @refresh="refreshAccount"/>
     <div slot="content" class="content">
       <section class="left">
-        <!-- <div class="search">
-          <img src="../../assets/img/search.png" alt>
-          <input type="text" placeholder="serach">
-        </div>-->
-        <p @click="loadData">{{$t('label.assert')}}</p>
+        <p>{{$t('label.assert')}}</p>
         <div class="total">¥0.00</div>
         <section id="perfect-scroll">
           <section class="coins" v-for="(item,index) in accountList" :key="index">
@@ -36,16 +32,6 @@
         >{{$t('button.transfer')}}</el-button>
         <p>{{$t('title.history')}}</p>
         <action :tranfers="tranfers" :refresh="refresh"/>
-        <!-- <section class="page">
-          <el-pagination
-            @prev-click="prevPage"
-            @next-click="nextPage"
-            @current-change="handleCurrentChange"
-            layout="prev, pager, next"
-            :total="total"
-            :page-size="1"
-          ></el-pagination>
-        </section>-->
       </section>
     </div>
   </section>
@@ -93,7 +79,6 @@ export default {
     ...mapState("wallet", ["accounts", "pwdhash"]),
     ...mapState("trans", ["tranferList"]),
     ...mapState([
-      "cocosAccount",
       "cocosCount",
       "lockedTime",
       "currentAccount",
@@ -103,8 +88,8 @@ export default {
     ])
   },
   watch: {
-    "cocosAccount.accounts"() {
-      console.log("cocosAccount.accounts")
+    "currentAccount"() {
+      console.log("currentAccount",this.currentAccount)
       this.loadData();
     }
   },
@@ -135,75 +120,64 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "setCurrentAccount",
       "setCocosCount",
       "setIsLocked",
       "setCocos",
       "setAccountType",
       "setUpdate",
-      "setCurLng"
+      "setCurLng",
+      "setLogin"
     ]),
     ...mapMutations("trans", ["setTranferList"]),
-    ...mapMutations("wallet", ["addAccount", "updateAccount", "deleteWallet"]),
+    ...mapMutations("wallet", ["addAccount", "updateAccount", "deleteWallet","getAccounts"]),
     ...mapActions(["lockCount", "nodeLists", "UpdateVersion"]),
     ...mapActions("account", [
       "getAccountInfo",
-      "UserAccount",
+      "queryAccountBalances",
       "OutPutKey",
       "logoutBCXAccount"
     ]),
+    ...mapActions("wallet", ["getAccounts"]),
     ...mapActions("trans", ["queryTranferList"]),
     handleCurrentChange(e) {
       this.tranfers = this.totalTx[e - 1];
     },
 
     loadData() {
-      this.totalTx = [];
-      this.total = 1;
+    this.totalTx = [];
+    this.total = 1;
+    console.info("isLocked===",this.isLocked);
+    if (!this.currentAccount){
+          this.setLogin(false);
+          this.$router.replace({ name: "initAccount" });
+          return
+       }
+      this.listShow();
+      this.lockAccount();
       this.getAccountInfo().then(res => {
-        if (res.account_name && res.locked) {
-            console.log("getAccountInfo -- res",res)
-          if (this.cocosAccount.accounts) {
-            this.setIsLocked(true);
-            console.log("cocosAccount.accounts",this.cocosAccount.accounts)
-            this.$router.replace({ name: "unlock" });
-          } else {
-            if (res.mode === "account") {
-              this.logoutBCXAccount().then(res => {
-                if (res.code === 1) {
-                  this.$router.replace({ name: "initAccount" });
-                }
-              });
-            } else {
-              this.deleteWallet().then(res => {
-                if (res.code === 1) {
-                  this.$router.replace({ name: "initAccount" });
-                }
-              });
-            }
-          }
-        } else {
-          this.lockAccount();
-          this.setIsLocked(false);
-          this.listShow();
-        }
+         console.info("getAccountInfo===",res);
       });
+      this.getAccounts().then(res => {
+         console.info("getAccounts===",res);
+      });
+      console.info("isLocked===",this.isLocked);
     },
+
     listShow() {
-      this.UserAccount().then(res => {
-        this.accountList = Object.entries(res.data);
-        if (res.code === 1) {
-          setTimeout(() => {
-            this.transferList();
-            clearInterval(this.myInterval);
-            this.myInterval = setInterval(() => {
-              this.transferList();
-              this.setCocosCount(res.data.COCOS);
-            }, 10000);
-          }, 50);
-        }
-      });
+        this.transferList();
+        clearInterval(this.myInterval);
+        this.myInterval = setInterval(() => {
+          this.transferList();
+        }, 20000);
+
+        this.queryBalance();
+        clearInterval(this.accountBalancesInterval);
+        this.accountBalancesInterval = setInterval(() => {
+        this.queryBalance();
+       }, 1000);
+     
     },
+
     prevPage(e) {
       this.tranfers = this.totalTx[e + 1];
     },
@@ -215,7 +189,6 @@ export default {
       const time = this.lockedTime ? this.lockedTime : 30;
       pageTimer = setTimeout(async () => {
         await this.lockCount();
-        this.loadData();
       }, time * 60000);
     },
     transferList() {
@@ -237,10 +210,18 @@ export default {
         message: this.$i18n.t("alert.copyFail")
       });
     },
-    selectAccount(account) {
-      this.setCurrentAccount(account);
-      this.refreshTransactions();
+
+    queryBalance(){
+        this.queryAccountBalances().then(res => {
+              console.info("listShow res",res);
+              this.accountList = Object.entries(res.data);
+              if (res.code === 1) {
+              clearInterval(this.accountBalancesInterval);
+              this.setCocosCount(res.data.COCOS);
+              }
+          });
     },
+
     async refreshAccount() {
       SocketService.initialize();
       this.refresh = true;

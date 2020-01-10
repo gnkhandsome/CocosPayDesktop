@@ -59,12 +59,12 @@ export default {
   },
   name: "storeWallet",
   computed: {
-    ...mapState(["privateKeys", "temporaryKeys", "cocosAccount"])
+    ...mapState(["privateKeys", "temporaryKeys", "currentAccount"])
   },
   methods: {
     ...mapActions("account", ["unlockAccount"]),
     ...mapActions("wallet", ["OutWalletPutKey", "BackupDownload"]),
-    ...mapMutations(["settemporaryKeys", "setKeys", "setAccount"]),
+    ...mapMutations(["settemporaryKeys", "setKeys"]),
     changeStore() {},
     StoreBin() {
       // ipcRenderer.on("downstate", (event, arg) => {
@@ -85,15 +85,9 @@ export default {
         });
         return;
       }
-      this.setAccount({
-        account: this.cocosAccount.accounts,
-        password: this.password
-      });
-      this.unlockAccount().then(res => {
-        this.setAccount({
-          account: this.cocosAccount.accounts,
-          password: ""
-        });
+      this.unlockAccount({
+                   password:this.password,
+                }).then(res => {
         if (res.code === 1) {
           this.unlock = false;
         }

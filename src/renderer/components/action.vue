@@ -11,12 +11,12 @@
       <section v-for="(item, index) in tranfers" :data="item" :key="index">
         <section class="td" v-if="item.type === 'transfer'">
           <div
-            :class="cocosAccount.accounts === item.parse_operations.from ? 'out' : 'in'"
-          >{{cocosAccount.accounts === item.parse_operations.from ? $t('label.ptaddress') : $t('label.ptfrom')}}</div>
-          <div>{{cocosAccount.accounts === item.parse_operations.from ? item.parse_operations.to : item.parse_operations.from}}</div>
+            :class="currentAccount === item.parse_operations.from ? 'out' : 'in'"
+          >{{currentAccount === item.parse_operations.from ? $t('label.ptaddress') : $t('label.ptfrom')}}</div>
+          <div>{{currentAccount === item.parse_operations.from ? item.parse_operations.to : item.parse_operations.from}}</div>
           <div
-            :class="cocosAccount.accounts === item.parse_operations.from ? 'out' : 'in'"
-          >{{cocosAccount.accounts === item.parse_operations.from ? '-' : '+'}}{{item.parse_operations.amount}}({{$t('title.test')}})</div>
+            :class="currentAccount === item.parse_operations.from ? 'out' : 'in'"
+          >{{currentAccount === item.parse_operations.from ? '-' : '+'}}{{item.parse_operations.amount}}({{$t('title.test')}})</div>
           <div>{{item.date}}</div>
           <div
             @click="$router.push({name:'transferInfo',params:item})"
@@ -34,11 +34,11 @@
           >{{$t('title.sendDetail')}}</div>
         </section>
         <section class="td" v-if="item.type === 'transfer_nh_asset'">
-          <div :class="cocosAccount.accounts === item.parse_operations.from ? 'out' : 'in'">NH</div>
+          <div :class="currentAccount === item.parse_operations.from ? 'out' : 'in'">NH</div>
           <div>{{item.parse_operations.from}}</div>
           <div
-            :class="cocosAccount.accounts === item.parse_operations.from ? 'out' : 'in'"
-          >{{cocosAccount.accounts === item.parse_operations.from ? '-' : '+'}}{{item.parse_operations.nh_asset}}</div>
+            :class="currentAccount === item.parse_operations.from ? 'out' : 'in'"
+          >{{currentAccount === item.parse_operations.from ? '-' : '+'}}{{item.parse_operations.nh_asset}}</div>
           <div>{{item.date}}</div>
           <div
             @click="$router.push({name:'transferInfo',params:item})"
@@ -57,7 +57,7 @@ export default {
   props: ["tranfers", "refresh"],
   methods: {},
   computed: {
-    ...mapState(["cocosAccount"])
+    ...mapState(["currentAccount"])
   },
   data() {
     return {

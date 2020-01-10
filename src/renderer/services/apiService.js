@@ -39,7 +39,7 @@ export default class ApiService {
   static async [Actions.IDENTITY_FROM_PERMISSIONS](request) {
     return {
       id: request.id,
-      result: store.state.cocosAccount.accounts,
+      result: store.state.currentAccount,
     }
   }
   static async [Actions.GETACCOUNTINFO](request) {
@@ -54,8 +54,8 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().creatNHAssetOrder({
@@ -77,7 +77,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res
@@ -119,7 +119,7 @@ export default class ApiService {
                   result: res
                 })
               } else {
-                store.dispatch('account/UserAccount')
+                store.dispatch('account/queryAccountBalances')
                 return resolve({
                   id: request.id,
                   result: res
@@ -137,8 +137,8 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().transferNHAsset({
@@ -151,7 +151,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res
@@ -184,7 +184,7 @@ export default class ApiService {
                   result: res
                 })
               } else {
-                store.dispatch('account/UserAccount')
+                store.dispatch('account/queryAccountBalances')
                 return resolve({
                   id: request.id,
                   result: res
@@ -202,8 +202,8 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().cancelNHAssetOrder({
@@ -215,7 +215,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res
@@ -247,7 +247,7 @@ export default class ApiService {
                   result: res
                 })
               } else {
-                store.dispatch('account/UserAccount')
+                store.dispatch('account/queryAccountBalances')
                 return resolve({
                   id: request.id,
                   result: res
@@ -265,8 +265,8 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().fillNHAssetOrder({
@@ -278,7 +278,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res
@@ -310,7 +310,7 @@ export default class ApiService {
                   result: res
                 })
               } else {
-                store.dispatch('account/UserAccount')
+                store.dispatch('account/queryAccountBalances')
                 return resolve({
                   id: request.id,
                   result: res
@@ -329,8 +329,8 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().callContractFunction({
@@ -346,7 +346,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res
@@ -382,7 +382,7 @@ export default class ApiService {
                   result: res
                 })
               } else {
-                store.dispatch('account/UserAccount')
+                store.dispatch('account/queryAccountBalances')
                 return resolve({
                   id: request.id,
                   result: res
@@ -400,12 +400,12 @@ export default class ApiService {
       let response
       let whiteList = Storage.get('whiteList') || []
       let white = whiteList.some(ele => {
-        console.log(ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts);
-        return ele.domain === request.payload.origin && ele.account === store.state.cocosAccount.accounts
+        console.log(ele.domain === request.payload.origin && ele.account === store.state.currentAccount);
+        return ele.domain === request.payload.origin && ele.account === store.state.currentAccount
       })
       if (white) {
         GetBCXWithState().transferAsset({
-          fromAccount: store.state.cocosAccount.accounts,
+          fromAccount: store.state.currentAccount,
           toAccount: request.payload.toAccount,
           amount: request.payload.amount,
           memo: request.payload.memo,
@@ -419,7 +419,7 @@ export default class ApiService {
               result: res
             })
           } else {
-            store.dispatch('account/UserAccount')
+            store.dispatch('account/queryAccountBalances')
             return resolve({
               id: request.id,
               result: res,
@@ -442,7 +442,7 @@ export default class ApiService {
             })
           }
           response = GetBCXWithState().transferAsset({
-            fromAccount: store.state.cocosAccount.accounts,
+            fromAccount: store.state.currentAccount,
             toAccount: request.payload.toAccount,
             amount: request.payload.amount,
             memo: request.payload.memo,
@@ -456,7 +456,7 @@ export default class ApiService {
                 result: res
               })
             } else {
-              store.dispatch('account/UserAccount')
+              store.dispatch('account/queryAccountBalances')
               return resolve({
                 id: request.id,
                 result: res,

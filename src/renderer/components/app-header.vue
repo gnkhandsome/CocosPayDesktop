@@ -6,9 +6,8 @@
         class="mr40 cursor flex"
         v-if="!isLocked"
         @click="listShow"
-        v-click-outside="onClickOutside"
-      >
-        <div class="account-name">{{cocosAccount.accounts}}</div>
+        v-click-outside="onClickOutside">
+        <div class="account-name">{{currentAccount}}</div>
         <img v-if="accountType === 'wallet'" src="../assets/img/change.png" alt>
       </div>
       <section class="account-list cursor" v-if="selectAccount">
@@ -18,9 +17,9 @@
           @click="chooseAccount(item,index)"
           :key="index"
         >
-          <span :class="item === cocosAccount.accounts ? 'active' : ''">{{item}}</span>
+          <span :class="item === currentAccount ? 'active' : ''">{{item}}</span>
           <!-- <div class="check" ></div> -->
-          <i v-if="item === cocosAccount.accounts" class="el-icon-check"></i>
+          <i v-if="item === currentAccount" class="el-icon-check"></i>
         </div>
         <div class="add" @click="addAccounts">+ {{$t('label.newAccout')}}</div>
       </section>
@@ -68,14 +67,14 @@ export default {
     clickOutside: vClickOutside.directive
   },
   computed: {
-    ...mapState(["cocosAccount", "isLocked", "accountType", "cocos"])
+    ...mapState(["currentAccount", "isLocked", "accountType", "cocos"])
   },
   mounted() {
     this.loadAccounts();
   },
   // directives: { clickoutside },
   watch: {
-    "cocosAccount.accounts"(val) {
+    "currentAccount"(val) {
       if (val) {
         this.loadAccounts();
       }
@@ -121,10 +120,6 @@ export default {
     chooseAccount(account, index) {
       this.setCurrentAccount({ account }).then(res => {
         if (res.code === 1) {
-          this.setAccount({
-            account: account,
-            password: ""
-          });
           // SocketService.initialize();
           this.selectAccount = false;
           this.$emit("refresh");
