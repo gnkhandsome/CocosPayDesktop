@@ -90,7 +90,7 @@ export default {
     };
 
     const amountValidator = (rule, value, callback) => {
-      if (value < 0 || value == 0) {
+      if (value < 0) {
         this.$kalert({
           message: this.$i18n.t("verify.noZero")
         });
@@ -158,16 +158,16 @@ export default {
   },
   mounted() {
     this.loading();
-    if (this.accountType === "wallet") {
-      this.OutPutKey().then(key => {
-        if (
-          !key.data.active_private_keys ||
-          !key.data.active_private_keys.length
-        ) {
-          this.owner = true;
-        }
-      });
-    }
+    // if (this.accountType === "wallet") {
+    //   this.OutPutKey().then(key => {
+    //     if (
+    //       !key.data.active_private_keys ||
+    //       !key.data.active_private_keys.length
+    //     ) {
+    //       this.owner = true;
+    //     }
+    //   });
+    // }
     // this.loadTokens()
   },
   methods: {
@@ -194,10 +194,13 @@ export default {
           } else {
             this.coins = [];
             for (let [key, value] of Object.entries(res.data)) {
-              this.coins.push({
+              console.log("key："+key+"value: "+value);
+              if (key != "GAS") {
+                this.coins.push({
                 coin: key,
                 amount: value
-              });
+               });
+              }
             }
           }
         }

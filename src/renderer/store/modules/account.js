@@ -241,18 +241,12 @@ export default {
       rootState
     }) {
       let resData
-      commit('loading', true, {
-        root: true
-      })
       try {
         await NewBCX.queryAccountBalances({
           unit: '',
           account: rootState.currentAccount
         }).then(res => {
           console.info("queryAccountBalances res",res);
-          commit('loading', false, {
-            root: true
-          })
           commit('setCocosCount', res.data.COCOS, {
             root: true
           })
@@ -277,14 +271,12 @@ export default {
       let resData
       try {
         await NewBCX.getPrivateKey().then(res => {
-          commit('loading', false, {
-            root: true
-          })
           if (res.code !== 1) {
             Alert({
               message: CommonJs.getI18nMessages(I18n).error[res.code]
             })
           }
+          console.log("getPrivateKey",res)
           resData = res
         })
         return resData

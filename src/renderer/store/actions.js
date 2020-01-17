@@ -116,6 +116,8 @@ export default {
                 faucet_url: Node.faucetUrl ? Node.faucetUrl : Node.url,
                 auto_reconnect: Node.connect ? Node.connect : false,
                 worker: false
+            },true).then(res=>{
+                console.info("apiConfig res",res);
             });
             commit('loading', false, {
                 root: true
@@ -124,6 +126,7 @@ export default {
             console.log(e);
         }
     },
+
     async IndexedDBAdd({
         commit
     }, name) {

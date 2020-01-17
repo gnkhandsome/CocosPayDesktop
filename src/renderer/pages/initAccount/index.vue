@@ -48,8 +48,14 @@ export default {
         initNode.connect = true;
       }
       this.apiConfig(initNode).then(() => {
-        this.init().then(() => {
-          });
+        this.init({
+                    real_sub:true,
+                    subscribeToRpcConnectionStatusCallback:res=>{
+                        console.info("subscribeToRpcConnectionStatusCallback res",res);
+                    }
+                }).then(res => {
+                     console.info("init res",res);
+                });
         });
       });
   },

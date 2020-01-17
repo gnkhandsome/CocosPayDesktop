@@ -154,28 +154,16 @@ export default {
        }
       this.listShow();
       this.lockAccount();
-      this.getAccountInfo().then(res => {
-         console.info("getAccountInfo===",res);
-      });
-      this.getAccounts().then(res => {
-         console.info("getAccounts===",res);
-      });
-      console.info("isLocked===",this.isLocked);
     },
 
     listShow() {
         this.transferList();
+        this.queryBalance();
         clearInterval(this.myInterval);
         this.myInterval = setInterval(() => {
-          this.transferList();
-        }, 20000);
-
-        this.queryBalance();
-        clearInterval(this.accountBalancesInterval);
-        this.accountBalancesInterval = setInterval(() => {
-        this.queryBalance();
-       }, 1000);
-     
+           this.transferList();
+           this.queryBalance();
+        }, 6000);
     },
 
     prevPage(e) {
@@ -184,13 +172,16 @@ export default {
     nextPage(e) {
       this.tranfers = this.totalTx[e - 1];
     },
+
     lockAccount() {
       clearTimeout(pageTimer);
-      const time = this.lockedTime ? this.lockedTime : 30;
+      const time = this.lockedTime ? this.lockedTime : 20;
       pageTimer = setTimeout(async () => {
+        console.info("will lockCount res");
         await this.lockCount();
-      }, time * 60000);
+      },  time * 60000);
     },
+
     transferList() {
       this.setTranferList({
         limit: 50,
@@ -213,10 +204,9 @@ export default {
 
     queryBalance(){
         this.queryAccountBalances().then(res => {
-              console.info("listShow res",res);
+              console.info("queryAccountBalances res",res);
               this.accountList = Object.entries(res.data);
               if (res.code === 1) {
-              clearInterval(this.accountBalancesInterval);
               this.setCocosCount(res.data.COCOS);
               }
           });

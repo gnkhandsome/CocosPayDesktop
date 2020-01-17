@@ -118,7 +118,7 @@ export default {
     minimum: '最小精度为',
     numberGtZero: '请输入大于0的数字',
     max: '超出上限',
-    noZero: '数量应该大于 0',
+    noZero: '数量不能小于 0',
     ownerKey: 'owner_key不能进行转账，请导入active_key',
     walletPassword: '请输入最初的临时密码',
   },
